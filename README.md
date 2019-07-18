@@ -1,0 +1,2 @@
+# SimpleJmeter
+连接easymock到jmeter的批量处理工具
