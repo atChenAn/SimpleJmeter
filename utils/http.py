@@ -1,12 +1,9 @@
 # coding=utf-8
-import urllib
+
+# from urllib import request
 
 
 class Http:
-    # 请求拦截器
-    requestInterceptor = []
-    # 响应拦截器
-    responseInterceptor = []
 
     # init 初始化部分
     def __init__(self):
@@ -79,18 +76,15 @@ class Http:
 
     # ============================================ 拦截器相关部分的代码 ============================================ #
 
-    # ============================================ 拦截器相关部分的代码 ============================================ #
+    def http_get(self, path, option):
+        # request.urlopen(path)
+        pass
 
-    def test(self):
-        print(self.requestInterceptor)
-        print(self.responseInterceptor)
+    def http_post(self):
+        pass
 
 
-# 单元测试部分，单元测试请书写至这个位置
-if __name__ == '__main__':
-    http = Http();
-
-    http.addRequestInterceptor(lambda x: 1)
-    http.addResponseInterceptor(lambda x: 1)
-
-    http.test()
+# 请求拦截器、静态成员
+Http.requestInterceptor = []
+# 响应拦截器、静态成员
+Http.responseInterceptor = []

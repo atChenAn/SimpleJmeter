@@ -1,4 +1,5 @@
 import sys
+from urllib import request
 
 
 class A:
@@ -16,22 +17,8 @@ def sayHello(name):
 
 
 def main():
-    sayHello('Jack')
-
-    buff = []
-
-    buff.append('Hello')
-    buff.append('Jack')
-
-    tempObj = A();
-
-    buff.append(tempObj)
-
-    print(buff.__len__())
-
-    buff.remove(tempObj)
-
-    print(buff.__len__())
+    responseData = request.urlopen('http://192.168.2.11/djc-gateway/platform/time')
+    print(responseData.read().decode('utf-8'))
 
 
 if __name__ == '__main__':
