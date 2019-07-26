@@ -1,25 +1,34 @@
+import ctypes
 import sys
-from urllib import request
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QApplication
+from PyQt5.QtCore import *
+from PyQt5 import QtCore
+
+try:
+    ctypes.windll.LoadLibrary('Qt5Core.dll')
+except:
+    pass
 
 
-class A:
-    def Hello(self):
-        print('Hello')
 
 
-def sayHello(name):
-    '''
-    sayHello
-    :param name:名字
-    :return:
-    '''
-    print('Hello,' + name)
+from ui.main import Ui_MainWindow
 
 
-def main():
-    responseData = request.urlopen('http://192.168.2.11/djc-gateway/platform/time')
-    print(responseData.read().decode('utf-8'))
+class Main(QMainWindow, Ui_MainWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    @pyqtSlot()  # 这个注解在QtCore中
+    def on_pushButton_clicked(self):
+        QMessageBox.information(self, '信息', '恭喜您，成功了')
 
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    win = Main()
+    win.show()
+
+    sys.exit(app.exec())

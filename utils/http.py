@@ -1,6 +1,7 @@
 # coding=utf-8
 
-# from urllib import request
+import requests
+from urllib import request, parse
 
 
 class Http:
@@ -76,12 +77,18 @@ class Http:
 
     # ============================================ 拦截器相关部分的代码 ============================================ #
 
-    def http_get(self, path, option):
-        # request.urlopen(path)
-        pass
+    def http_get(self, path, params={}):
 
-    def http_post(self):
-        pass
+        queryStr = '?%s' % parse.urlencode(params)
+        # 如果没有查询条件就清空queryStr
+        if queryStr == '?':
+            queryStr = ''
+
+        requests.get(path, parse)
+
+        buffer = request.urlopen()
+        buffer = buffer.read().decode('utf-8');
+        return buffer;
 
 
 # 请求拦截器、静态成员
