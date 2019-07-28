@@ -6,34 +6,63 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>384</height>
+    <width>979</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>SearchPage Generate</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>140</y>
-      <width>75</width>
-      <height>23</height>
+      <x>20</x>
+      <y>10</y>
+      <width>941</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>swaggerUrl：</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>download</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>91</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Test</string>
+     <string>interface list</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>180</y>
-      <width>321</width>
-      <height>21</height>
+      <x>20</x>
+      <y>70</y>
+      <width>941</width>
+      <height>241</height>
      </rect>
     </property>
    </widget>
@@ -43,8 +72,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>577</width>
-     <height>23</height>
+     <width>979</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

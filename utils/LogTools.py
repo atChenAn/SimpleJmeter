@@ -1,4 +1,5 @@
 import sys
+import os
 from utils import TimeTools
 
 
@@ -11,12 +12,15 @@ class SysLogs:
     }
 
     logLevel = 3  # 0 错误 1 警告 2 信息 3 开发
-    logPath = sys.path[0] + '\\log\\' + TimeTools.getNowTimeStr(TimeTools.DateFormat.DATE_DATE) + '.log'
+    logPath = sys.path[0] + os.sep + 'log'
 
     def __init__(self, level=3, logPath=None):
         self.setLevel(level)
         if (logPath):
             self.setLogPath(logPath)
+
+        if not os.path.exists(self.logPath):
+            os.mkdir(self.logPath)
 
     def setLevel(self, level):
         if level < 0 or level > 3:
@@ -39,25 +43,26 @@ class SysLogs:
         self.__writeFile(self.LogLevel['ERROR'], msg)
 
     def __writeFile(self, level, content):
-        levelStrs = ['ERROR', 'WARN', 'INFO', 'DEBUG']
+        levelStrs = ['[ERROR]', '[WARN]', '[INFO]', '[DEBUG]']
         if level > self.logLevel:
             return
 
-        timeStr = levelStrs[level] + ' ' + TimeTools.getNowTimeStr() + ' ' + content
+        timeStr = '%-8s%-20s%s\r' % (levelStrs[level], TimeTools.getNowTimeStr(), content)
         # 打开文件流写出log
         try:
-            print(self.logPath)
-            fileObj = open(r'E:\\SimpleJmeter\\utils\\log\\2019-07-26.log', 'w+')
-            # fileObj.write(timeStr)
-            # fileObj.flush()
-            # fileObj.close()
+            fileName = self.logPath + os.sep + TimeTools.getNowTimeStr(TimeTools.DateFormat.DATE_DATE) + '.log'
+            fileObj = open(fileName, 'a+')
+            fileObj.write(timeStr)
+            fileObj.flush()
+            fileObj.close()
         except:
             print('日志写出失败：文件IO操作发生异常')
 
 
 if __name__ == '__main__':
     syslog = SysLogs()
+    # syslog.setLevel(syslog.LogLevel['WARN'])
     syslog.debug('这是一条debug信息')
-    # syslog.info('这是一条info信息')
-    # syslog.warn('这是一条warn信息')
-    # syslog.error('这是一条error信息')
+    syslog.info('这是一条info信息')
+    syslog.warn('这是一条warn信息')
+    syslog.error('这是一条error信息')
