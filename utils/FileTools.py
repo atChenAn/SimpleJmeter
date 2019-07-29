@@ -10,20 +10,23 @@ class FileReader:
 
     def __init__(self, fileName):
         try:
-            self.file = open(fileName)
-        except Exception:
+            self.file = open(fileName, 'r', encoding='UTF-8')
+        except Exception as e:
             print('IO异常')
+            sysLog.info('IO异常：' + e.__str__())
 
     def moveToBegin(self):
         if not pydash.predicates.is_none(self.file):
             self.file.seek(0)
 
     def read(self, len=None):
-
-        if not pydash.predicates.is_none(self.file):
-            if pydash.predicates.is_none(len):
-                return self.file.read()
-            return self.file.read(len)
+        try:
+            if not pydash.predicates.is_none(self.file):
+                if pydash.predicates.is_none(len):
+                    return self.file.read()
+                return self.file.read(len)
+        except Exception as e:
+            sysLog.info('IO异常：' + e.__str__())
 
     def close(self):
         if not pydash.predicates.is_none(self.file):

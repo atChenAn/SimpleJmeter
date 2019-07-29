@@ -1,5 +1,15 @@
-from pydash import objects, arrays
+from pydash import objects, arrays, collections
+from utils import DataUtils
 import json
+
+
+def getTagsFromPath(path):
+    wayKey = ['get', 'post', 'patch', 'put', 'delete']
+
+    for key in wayKey:
+        if objects.get(path, key) != None:
+            return path[key]['tags'][0]
+    return None
 
 
 def buildTop(data):
@@ -16,15 +26,6 @@ def buildTop(data):
     return tops;
 
 
-def getTagsFromPath(path):
-    wayKey = ['get', 'post', 'patch', 'put', 'delete']
-
-    for key in wayKey:
-        if objects.get(path, key) != None:
-            return path[key]['tags'][0]
-    return None
-
-
 def buildChild(data, tags):
     '''
     构建child接口组
@@ -35,15 +36,58 @@ def buildChild(data, tags):
     dataObj = json.loads(data)
     tagsObj = objects.clone_deep(tags)
 
-    #         tagsIndex = arrays.find_index(tagsObj, lambda tagItem: tagItem[''] == item[''])
-
     # 遍历 tags ,嵌套遍历paths将对应的连接挂在到tags下的child中
-
     paths = objects.get(dataObj, 'paths')
     for tag in tagsObj:
         for path in paths:
             if tag['name'] == getTagsFromPath(paths[path]):
-                tag['child'].append(paths[path])
+                childItem = objects.clone_deep(paths[path])
+                tag['child'].append(objects.assign(childItem, {'path': path}))
 
-    arrays.mapcat(tagsObj, lambda tag: tag)
     return tagsObj
+
+
+def getInterfaceCount(tags):
+    rowIndex = 0
+    for row in range(len(tags)):
+        for childIndex in range(len(tags[row]['child'])):
+            rowData = tags[row]['child'][childIndex]
+            methodTypes = DataUtils.getValidMethod(rowData)
+            rowIndex += len(methodTypes)
+    return rowIndex
+
+
+def buildListData(tags, keyWord=''):
+    listData = []
+
+    for row in range(len(tags)):
+        for childIndex in range(len(tags[row]['child'])):
+            rowData = tags[row]['child'][childIndex]
+
+            path = rowData['path']
+            methodTypes = DataUtils.getValidMethod(rowData)
+
+            for methodType in methodTypes:
+                itemData = objects.clone_deep(tags[row]['child'][childIndex][methodType])
+                itemData = objects.assign(itemData, {'path': path, 'type': methodType})
+                listData.append(itemData)
+
+    return listData
+
+
+def _filterCallBack(item, keyWord):
+    keys = ['summary', 'path', 'type']
+
+    # tags 为数组结构 单独处理
+    if objects.get(item, 'tags')[0].find(keyWord) >= 0:
+        return True
+
+    for key in keys:
+        if objects.get(item, key).find(keyWord) >= 0:
+            return True
+
+    return False
+
+
+def filter(listData, keyWord):
+    return collections.filter_(listData, lambda item: _filterCallBack(item, keyWord))

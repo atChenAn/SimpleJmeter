@@ -1,14 +1,22 @@
 # coding=utf-8
 
 import requests
+from PyQt5.QtCore import QThread, pyqtSignal
 from urllib import request, parse
 
 
-class Http:
+class Http(QThread):
+    signal = pyqtSignal(object)  # 括号里填写信号传递的参数
 
     # init 初始化部分
     def __init__(self):
-        pass
+        super().__init__()
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        self.signal.emit()
 
     # ============================================ 拦截器相关部分的代码 ============================================ #
     # 添加拦截器
@@ -78,16 +86,16 @@ class Http:
     # ============================================ 拦截器相关部分的代码 ============================================ #
 
     def http_get(self, path, params={}):
-
+        print('http_get')
         queryStr = '?%s' % parse.urlencode(params)
         # 如果没有查询条件就清空queryStr
         if queryStr == '?':
             queryStr = ''
 
-        requests.get(path, parse)
-
-        buffer = request.urlopen()
-        buffer = buffer.read().decode('utf-8');
+        response = requests.get('https://' + path + queryStr)
+        response.encoding = 'utf-8'
+        buffer = response.text;
+        print(buffer)
         return buffer;
 
 
@@ -95,3 +103,22 @@ class Http:
 Http.requestInterceptor = []
 # 响应拦截器、静态成员
 Http.responseInterceptor = []
+
+
+def http_get(path, params={}):
+    print('http_get')
+    queryStr = '?%s' % parse.urlencode(params)
+    # 如果没有查询条件就清空queryStr
+    if queryStr == '?':
+        queryStr = ''
+
+    response = requests.get(path + queryStr)
+    response.encoding = 'utf-8'
+    buffer = response.text;
+    print(buffer)
+    return buffer;
+
+
+if __name__ == '__main__':
+    data = http_get('http://www.baidu.com')
+    print(data)
