@@ -86,7 +86,6 @@ class Http:
         # 创建线程
         # 启动线程
 
-
         queryStr = '?%s' % parse.urlencode(params)
         # 如果没有查询条件就清空queryStr
         if queryStr == '?':
@@ -111,11 +110,13 @@ def http_get(path, params={}):
     # 如果没有查询条件就清空queryStr
     if queryStr == '?':
         queryStr = ''
-
-    response = requests.get('http://' + path + queryStr)
-    response.encoding = 'utf-8'
-    buffer = response.text;
-    return buffer;
+    try:
+        response = requests.get('http://' + path + queryStr)
+        response.encoding = 'utf-8'
+        buffer = response.text;
+        return buffer;
+    except Exception as e:
+        sysLog.warn('请求失败：' + e)
 
 
 if __name__ == '__main__':

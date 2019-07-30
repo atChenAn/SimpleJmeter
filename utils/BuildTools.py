@@ -1,6 +1,8 @@
 from pydash import objects, arrays, collections
-from utils import DataUtils
+from utils import DataUtils, LogTools
 import json
+
+sysLog = LogTools.SysLogs()
 
 
 def getTagsFromPath(path):
@@ -18,12 +20,16 @@ def buildTop(data):
     :param data: swagger原始返回的信息
     :return:返回顶层元组信息
     '''
-    dataObj = json.loads(data)
-    tags = objects.get(dataObj, 'tags', [])
-    tops = arrays.compact(tags)
-    tops = arrays.mapcat(tops, lambda item: objects.assign(objects.clone(item), {'child': []}))
+    try:
+        dataObj = json.loads(data)
+        tags = objects.get(dataObj, 'tags', [])
+        tops = arrays.compact(tags)
+        tops = arrays.mapcat(tops, lambda item: objects.assign(objects.clone(item), {'child': []}))
 
-    return tops;
+        return tops;
+    except:
+        sysLog.warn('JSON处理失败，请确认地址是否正确')
+        return []
 
 
 def buildChild(data, tags):
@@ -33,18 +39,23 @@ def buildChild(data, tags):
     :param tasg: buildTop构建的tags组
     :return: 带有child信息的tags组
     '''
-    dataObj = json.loads(data)
-    tagsObj = objects.clone_deep(tags)
+    try:
 
-    # 遍历 tags ,嵌套遍历paths将对应的连接挂在到tags下的child中
-    paths = objects.get(dataObj, 'paths')
-    for tag in tagsObj:
-        for path in paths:
-            if tag['name'] == getTagsFromPath(paths[path]):
-                childItem = objects.clone_deep(paths[path])
-                tag['child'].append(objects.assign(childItem, {'path': path}))
+        dataObj = json.loads(data)
+        tagsObj = objects.clone_deep(tags)
 
-    return tagsObj
+        # 遍历 tags ,嵌套遍历paths将对应的连接挂在到tags下的child中
+        paths = objects.get(dataObj, 'paths')
+        for tag in tagsObj:
+            for path in paths:
+                if tag['name'] == getTagsFromPath(paths[path]):
+                    childItem = objects.clone_deep(paths[path])
+                    tag['child'].append(objects.assign(childItem, {'path': path}))
+
+        return tagsObj
+    except:
+        sysLog.warn('JSON处理失败，请确认地址是否正确')
+        return []
 
 
 def getInterfaceCount(tags):
