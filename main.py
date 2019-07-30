@@ -30,18 +30,16 @@ class Main(QMainWindow, Ui_MainWindow):
     @pyqtSlot()  # 这个注解在QtCore中
     def on_downloadPushButton_clicked(self):
         url = self.lineEdit.text()
-        self.http_thred = HttpTools.Http(url)
-        self.http_thred.run()
-        # reader = FileTools.FileReader('./swagger.json')
-        # data = reader.read()
-        # tags = BuildTools.buildTop(data)
-        # tags = BuildTools.buildChild(data, tags)
-        # self.listData = BuildTools.buildListData(tags)
-        # UiUtils.renderTableItem(self.tableWidget, self.listData)
+        data = HttpTools.http_get(url)
+        tags = BuildTools.buildTop(data)
+        tags = BuildTools.buildChild(data, tags)
+        self.listData = BuildTools.buildListData(tags)
+        UiUtils.renderTableItem(self.tableWidget, self.listData)
         # QMessageBox.information(self, '信息', '恭喜您，成功了')
 
     @pyqtSlot(object)
     def updateTable(self, data):
+        print('pyqtSlot - cb', data)
 
     @pyqtSlot(str)
     def on_searchLineEdit_textChanged(self, str):
@@ -50,7 +48,10 @@ class Main(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    win = Main()
-    win.show()
-    sys.exit(app.exec())
+    # app = QApplication(sys.argv)
+    # win = Main()
+    # win.show()
+    # sys.exit(app.exec())
+    pass
+
+# Python  QThread使用多线程方法

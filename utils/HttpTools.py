@@ -3,20 +3,17 @@
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 from urllib import request, parse
+from utils import LogTools
+
+sysLog = LogTools.SysLogs()
 
 
-class Http(QThread):
-    signal = pyqtSignal(object)  # 括号里填写信号传递的参数
+class Http:
+    signal = None  # 括号里填写信号传递的参数
 
     # init 初始化部分
     def __init__(self):
-        super().__init__()
-
-    def __del__(self):
-        self.wait()
-
-    def run(self):
-        self.signal.emit()
+        self.signal = pyqtSignal(object)
 
     # ============================================ 拦截器相关部分的代码 ============================================ #
     # 添加拦截器
@@ -85,18 +82,22 @@ class Http(QThread):
 
     # ============================================ 拦截器相关部分的代码 ============================================ #
 
-    def http_get(self, path, params={}):
-        print('http_get')
+    def http_get(self, path, callback, params={}):
+        # 创建线程
+        # 启动线程
+
+
         queryStr = '?%s' % parse.urlencode(params)
         # 如果没有查询条件就清空queryStr
         if queryStr == '?':
             queryStr = ''
-
-        response = requests.get('https://' + path + queryStr)
-        response.encoding = 'utf-8'
-        buffer = response.text;
-        print(buffer)
-        return buffer;
+        try:
+            response = requests.get('https://' + path + queryStr)
+            response.encoding = 'utf-8'
+            buffer = response.text;
+            return buffer;
+        except Exception as e:
+            sysLog.warn('获取数据失败:' + e.__str__())
 
 
 # 请求拦截器、静态成员
@@ -106,19 +107,17 @@ Http.responseInterceptor = []
 
 
 def http_get(path, params={}):
-    print('http_get')
     queryStr = '?%s' % parse.urlencode(params)
     # 如果没有查询条件就清空queryStr
     if queryStr == '?':
         queryStr = ''
 
-    response = requests.get(path + queryStr)
+    response = requests.get('http://' + path + queryStr)
     response.encoding = 'utf-8'
     buffer = response.text;
-    print(buffer)
     return buffer;
 
 
 if __name__ == '__main__':
-    data = http_get('http://www.baidu.com')
+    data = http_get('https://www.baidu.com')
     print(data)
