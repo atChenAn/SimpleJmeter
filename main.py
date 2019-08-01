@@ -76,6 +76,10 @@ class MainApp(QMainWindow, Ui_MainWindow):
         if paths:
             self.lineEdit_2.setText(paths)
 
+    @pyqtSlot()
+    def on_runPushButton_clicked(self):
+        QMessageBox.information(self, '成功', '生成完毕！')
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

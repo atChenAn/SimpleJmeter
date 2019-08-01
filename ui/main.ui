@@ -175,6 +175,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="runPushButton">
+       <property name="text">
+        <string>run</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
