@@ -20,6 +20,7 @@ from ui.main import Ui_MainWindow
 
 
 class MainApp(QMainWindow, Ui_MainWindow):
+    data = {}
     listData = []
     filteredData = []
     currentItem = None
@@ -29,19 +30,19 @@ class MainApp(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         UiUtils.initTable(self.tableWidget)
         UiUtils.initParamsTable(self.tableWidget_2)
+        UiUtils.initContentTable(self.tableWidget_3)
         self.setFixedSize(self.width(), self.height())  # 禁用最大化、最小化、拉伸
 
     @pyqtSlot()  # 这个注解在QtCore中
     def on_downloadPushButton_clicked(self):
         url = self.lineEdit.text()
-        data = HttpTools.http_get(url)
-        tags = BuildTools.buildTop(data)
-        tags = BuildTools.buildChild(data, tags)
+        self.data = HttpTools.http_get(url)
+        tags = BuildTools.buildTop(self.data)
+        tags = BuildTools.buildChild(self.data, tags)
         self.listData = BuildTools.buildListData(tags)
         self.filteredData = self.listData
-        UiUtils.renderTableItem(self.tableWidget, self.filteredData)
+        UiUtils.renderApiTableItem(self.tableWidget, self.filteredData)
         # QMessageBox.information(self, '信息', '恭喜您，成功了')
-        print('1')
 
     @pyqtSlot(object)
     def updateTable(self, data):
@@ -50,12 +51,15 @@ class MainApp(QMainWindow, Ui_MainWindow):
     @pyqtSlot(str)
     def on_searchLineEdit_textChanged(self, str):
         self.filteredData = BuildTools.filter(self.listData, str)
-        UiUtils.renderTableItem(self.tableWidget, self.filteredData)
+        UiUtils.renderApiTableItem(self.tableWidget, self.filteredData)
 
     @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemClicked(self, item: QTableWidgetItem):
         self.currentItem = self.filteredData[item.row()]
-        UiUtils.renderParamsTable(self.tableWidget_2, objects.get(self.currentItem, 'parameters', []))
+        UiUtils.renderParamsTableItem(self.tableWidget_2, objects.get(self.currentItem, 'parameters', []))
+        UiUtils.renderContentTableItem(self.tableWidget_3, self.currentItem, self.data)
+
+        print(self.currentItem)
 
 
 if __name__ == '__main__':

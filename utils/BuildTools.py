@@ -102,3 +102,30 @@ def _filterCallBack(item, keyWord):
 
 def filter(listData, keyWord):
     return collections.filter_(listData, lambda item: _filterCallBack(item, keyWord))
+
+
+def buildFields(apiItem, data):
+    ref = objects.get(apiItem, 'responses.200.schema.$ref')
+    ref = ref.replace('#/definitions/', '')
+
+    dataObj = json.loads(data)
+    ref = objects.get(dataObj, 'definitions.' + ref + '.properties.data.items.$ref')
+    ref = ref.replace('#/definitions/', '')
+    cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
+    print(ref)
+
+    fields = []
+
+    for key in cols:
+        fields.append({key: key, 'name': cols[key]})
+
+    print(fields)
+    return []
+# responses => 200 => schema => $ref
+
+# definitions => #/definitions/PageResult«合同付款-管理列表-修改» => properties => data => items
+
+#         #/definitions => 合同付款-管理列表-修改 => properties
+
+#   遍历key，val为 {"type": "number",
+#           "description": "合同金额 - 合同的总执行金额"}
