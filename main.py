@@ -3,7 +3,7 @@
 import ctypes
 import sys
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QAbstractItemView, QTableView, QMainWindow, QMessageBox, \
-    QApplication
+    QApplication, QFileDialog
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
@@ -23,6 +23,7 @@ class MainApp(QMainWindow, Ui_MainWindow):
     data = {}
     listData = []
     filteredData = []
+    fields = []
     currentItem = None
 
     def __init__(self):
@@ -56,10 +57,24 @@ class MainApp(QMainWindow, Ui_MainWindow):
     @pyqtSlot(QTableWidgetItem)
     def on_tableWidget_itemClicked(self, item: QTableWidgetItem):
         self.currentItem = self.filteredData[item.row()]
-        UiUtils.renderParamsTableItem(self.tableWidget_2, objects.get(self.currentItem, 'parameters', []))
-        UiUtils.renderContentTableItem(self.tableWidget_3, self.currentItem, self.data)
+        self.fields = BuildTools.buildFields(self.currentItem, self.data)
 
-        print(self.currentItem)
+        UiUtils.renderParamsTableItem(self.tableWidget_2, objects.get(self.currentItem, 'parameters', []))
+        UiUtils.renderContentTableItem(self.tableWidget_3, self.fields)
+
+    @pyqtSlot()
+    def on_selectPushButton_clicked(self):
+        paramsItems = self.tableWidget_2.selectedIndexes()
+        paramsIndexs = DataUtils.getSelectIndexs(paramsItems)
+        filedItems = self.tableWidget_3.selectedIndexes()
+        filedIndexs = DataUtils.getSelectIndexs(filedItems)
+
+        print(paramsIndexs)
+        print(filedIndexs)
+
+        paths = QFileDialog.getExistingDirectory()
+        if paths:
+            self.lineEdit_2.setText(paths)
 
 
 if __name__ == '__main__':

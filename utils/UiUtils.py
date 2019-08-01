@@ -58,14 +58,12 @@ def renderParamsTableItem(table: QTableWidget, params):
         table.setItem(rowIndex, 2, descItem)
 
 
-def renderContentTableItem(table: QTableWidget, apiItem, tags):
-    fields = BuildTools.buildFields(apiItem, tags)
-
+def renderContentTableItem(table: QTableWidget, fields):
     table.setRowCount(len(fields))
     for rowIndex in range(len(fields)):
         rowData = fields[rowIndex]
 
         methodTypeItem = QTableWidgetItem(objects.get(rowData, 'key', '--'))
-        pathItem = QTableWidgetItem(objects.get(rowData, 'name', '--'))
+        pathItem = QTableWidgetItem(objects.get(rowData, 'name.description', '--'))
         table.setItem(rowIndex, 0, methodTypeItem)
         table.setItem(rowIndex, 1, pathItem)

@@ -16,3 +16,10 @@ def getValidMethod(obj):
         if objects.get(obj, method) != None:
             valids.append(method)
     return valids
+
+
+def getSelectIndexs(items):
+    paramsIndex = []
+    for index in range(0, len(items), 3):
+        paramsIndex.append(items[index].row())
+    return paramsIndex

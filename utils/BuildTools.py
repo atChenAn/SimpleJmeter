@@ -110,17 +110,16 @@ def buildFields(apiItem, data):
 
     dataObj = json.loads(data)
     ref = objects.get(dataObj, 'definitions.' + ref + '.properties.data.items.$ref')
-    ref = ref.replace('#/definitions/', '')
-    cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
-    print(ref)
+    try:
+        ref = ref.replace('#/definitions/', '')
+        cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
 
-    fields = []
-
-    for key in cols:
-        fields.append({key: key, 'name': cols[key]})
-
-    print(fields)
-    return []
+        fields = []
+        for key in cols:
+            fields.append({'key': key, 'name': cols[key]})
+        return fields
+    except:
+        return []
 # responses => 200 => schema => $ref
 
 # definitions => #/definitions/PageResult«合同付款-管理列表-修改» => properties => data => items
