@@ -8,9 +8,9 @@ sysLog = LogTools.SysLogs()
 class FileReader:
     file = None
 
-    def __init__(self, fileName):
+    def __init__(self, fileName, model=None):
         try:
-            self.file = open(fileName, 'r', encoding='UTF-8')
+            self.file = open(fileName, model or 'r', encoding='UTF-8')
         except Exception as e:
             print('IO异常')
             sysLog.info('IO异常：' + e.__str__())
@@ -28,17 +28,36 @@ class FileReader:
         except Exception as e:
             sysLog.info('IO异常：' + e.__str__())
 
+    def write(self, data):
+        try:
+            if not pydash.predicates.is_none(self.file):
+                self.file.write(data)
+        except Exception as e:
+            sysLog.info('IO异常：' + e.__str__())
+
     def close(self):
         if not pydash.predicates.is_none(self.file):
+            self.file.flush()
             self.file.close()
 
 
 def readFile(path):
     if os.path.exists(path) and os.path.isfile(path):
         fileReader = FileReader(path)
-        return fileReader.read()
+        data = fileReader.read()
+        fileReader.close()
+        return data
     else:
         sysLog.info('读取文件失败：文件不存在或者path指定的路径是文件夹')
+
+
+def writeFile(path, data):
+    try:
+        fileReader = FileReader(path, 'w')
+        fileReader.write(data)
+        fileReader.close()
+    except Exception as e:
+        sysLog.info('文件写出失败：' + e)
 
 
 if __name__ == '__main__':

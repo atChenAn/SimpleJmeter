@@ -9,7 +9,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
 from pydash import arrays
-from utils import BuildTools, FileTools, DataUtils, UiUtils, HttpTools, LogTools
+from utils import BuildTools, FileTools, DataUtils, UiUtils, HttpTools, LogTools, CreaterTools
 from pydash import objects
 import configparser
 import base64
@@ -90,11 +90,6 @@ class MainApp(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_selectPushButton_clicked(self):
-        paramsItems = self.tableWidget_2.selectedIndexes()
-        paramsIndexs = DataUtils.getSelectIndexs(paramsItems)
-        filedItems = self.tableWidget_3.selectedIndexes()
-        filedIndexs = DataUtils.getSelectIndexs(filedItems)
-
         paths = QFileDialog.getExistingDirectory()
         if paths:
             self.lineEdit_2.setText(paths)
@@ -111,6 +106,18 @@ class MainApp(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_runPushButton_clicked(self):
+
+        paramsItems = self.tableWidget_2.selectedIndexes()
+        paramsIndexs = DataUtils.getSelectIndexs(paramsItems)
+        # filedItems = self.tableWidget_3.selectedIndexes()
+        # filedIndexs = DataUtils.getSelectIndexs(filedItems)
+        filteredData = DataUtils.getSelectFilter(paramsIndexs, self.fields)
+        filteredData = DataUtils.convertSelectFilter(filteredData)
+
+        CreaterTools.generateFilterForm(filteredData, self.lineEdit_2.text())
+
+        # 获取对应的  Title、keyName、type即可
+
         QMessageBox.information(self, '成功', '生成完毕！')
 
 
