@@ -1,6 +1,7 @@
 # encoding=utf-8
 
 import ctypes
+import os
 import sys
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QAbstractItemView, QTableView, QMainWindow, QMessageBox, \
     QApplication, QFileDialog
@@ -8,8 +9,10 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
 from pydash import arrays
-from utils import BuildTools, FileTools, DataUtils, UiUtils, HttpTools
+from utils import BuildTools, FileTools, DataUtils, UiUtils, HttpTools, LogTools
 from pydash import objects
+import configparser
+import base64
 
 try:
     ctypes.windll.LoadLibrary('Qt5Core.dll')
@@ -17,6 +20,8 @@ except:
     pass
 
 from ui.main import Ui_MainWindow
+
+configPath = sys.path[0] + os.sep + 'ui-cache.ini'
 
 
 class MainApp(QMainWindow, Ui_MainWindow):
@@ -34,6 +39,18 @@ class MainApp(QMainWindow, Ui_MainWindow):
         UiUtils.initContentTable(self.tableWidget_3)
         self.setFixedSize(self.width(), self.height())  # 禁用最大化、最小化、拉伸
 
+        config = configparser.ConfigParser()
+        config.read(configPath, encoding='utf-8')
+        try:
+            if config.has_option('UI', 'url'):
+                T = config.get('UI', 'url')
+                self.lineEdit.setText(base64.b64decode(T).decode('utf-8'))
+            if config.has_option('UI', 'savepath'):
+                T = config.get('UI', 'savepath')
+                self.lineEdit_2.setText(base64.b64decode(T).decode('utf-8'))
+        except:
+            print('未读取到配置')
+
     @pyqtSlot()  # 这个注解在QtCore中
     def on_downloadPushButton_clicked(self):
         url = self.lineEdit.text()
@@ -43,6 +60,15 @@ class MainApp(QMainWindow, Ui_MainWindow):
         self.listData = BuildTools.buildListData(tags)
         self.filteredData = self.listData
         UiUtils.renderApiTableItem(self.tableWidget, self.filteredData)
+
+        config = configparser.ConfigParser()
+        config.read(configPath, encoding='utf-8')
+        if not config.has_section('UI'):
+            config.add_section('UI')
+        try:
+            config.write(open(configPath, 'w'))
+        except Exception as e:
+            print(e)
         # QMessageBox.information(self, '信息', '恭喜您，成功了')
 
     @pyqtSlot(object)
@@ -69,12 +95,19 @@ class MainApp(QMainWindow, Ui_MainWindow):
         filedItems = self.tableWidget_3.selectedIndexes()
         filedIndexs = DataUtils.getSelectIndexs(filedItems)
 
-        print(paramsIndexs)
-        print(filedIndexs)
-
         paths = QFileDialog.getExistingDirectory()
         if paths:
             self.lineEdit_2.setText(paths)
+
+            config = configparser.ConfigParser()
+            config.read(configPath, encoding='utf-8')
+            if not config.has_section('UI'):
+                config.add_section('UI')
+            try:
+                config.set('UI', 'savepath', base64.b64encode(paths.encode('utf-8')).decode('utf-8'))
+                config.write(open(configPath, 'w'))
+            except Exception as e:
+                print(e)
 
     @pyqtSlot()
     def on_runPushButton_clicked(self):

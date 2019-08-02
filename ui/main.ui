@@ -37,7 +37,7 @@
      <item>
       <widget class="QLineEdit" name="lineEdit">
        <property name="text">
-        <string>localhost:8080/swagger.json</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -191,7 +191,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
