@@ -25,11 +25,12 @@ configPath = sys.path[0] + os.sep + 'ui-cache.ini'
 
 
 class MainApp(QMainWindow, Ui_MainWindow):
-    data = {}
-    listData = []
-    filteredData = []
-    fields = []
-    currentItem = None
+    data = {}  # 原始 JSON数据
+    listData = []  # 全部Api列表数据
+    filteredData = []  # 筛选之后的Api 列表数据
+    currentItem = None  # 当前选中的Api项目
+    fields = []  # Content list数据
+    params = []  # 参数列表数据
 
     def __init__(self):
         super().__init__()
@@ -84,6 +85,7 @@ class MainApp(QMainWindow, Ui_MainWindow):
     def on_tableWidget_itemClicked(self, item: QTableWidgetItem):
         self.currentItem = self.filteredData[item.row()]
         self.fields = BuildTools.buildFields(self.currentItem, self.data)
+        self.params = objects.get(self.currentItem, 'parameters', [])
 
         UiUtils.renderParamsTableItem(self.tableWidget_2, objects.get(self.currentItem, 'parameters', []))
         UiUtils.renderContentTableItem(self.tableWidget_3, self.fields)
@@ -107,16 +109,16 @@ class MainApp(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_runPushButton_clicked(self):
 
+        # 生成查询参数部分的Form表单TSX
         paramsItems = self.tableWidget_2.selectedIndexes()
         paramsIndexs = DataUtils.getSelectIndexs(paramsItems)
-        # filedItems = self.tableWidget_3.selectedIndexes()
-        # filedIndexs = DataUtils.getSelectIndexs(filedItems)
-        filteredData = DataUtils.getSelectFilter(paramsIndexs, self.fields)
+        filteredData = DataUtils.getSelectFilter(paramsIndexs, self.params)
         filteredData = DataUtils.convertSelectFilter(filteredData)
-
         CreaterTools.generateFilterForm(filteredData, self.lineEdit_2.text())
 
-        # 获取对应的  Title、keyName、type即可
+        # 生成TableContent的TSX
+        # filedItems = self.tableWidget_3.selectedIndexes()
+        # filedIndexs = DataUtils.getSelectIndexs(filedItems)
 
         QMessageBox.information(self, '成功', '生成完毕！')
 

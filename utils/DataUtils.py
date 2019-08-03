@@ -40,9 +40,20 @@ def convertSelectFilter(filters):
     buffer = []
     for item in filters:
         buffer.append({
-            'title': item['key'],
-            'keyName': item['name']['description'],
-            'type': item['name']['type']
+            'key': objects.get(item, 'name'),
+            'title': objects.get(item, 'description'),
+            'type': objects.get(item, 'type'),
         })
 
     return buffer
+
+
+def isLikeDate(keyName: str):
+    keyDict = ['date', 'time']
+    lowerKeyName = keyName.lower()
+
+    for key in keyDict:
+        if key in lowerKeyName:
+            return True
+
+    return False

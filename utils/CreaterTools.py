@@ -1,6 +1,6 @@
 import sys
 import os
-from utils import FileTools, TplEnum
+from utils import FileTools, TplEnum, DataUtils, PrettierTools
 
 runPath = sys.path[0]
 
@@ -14,7 +14,7 @@ tplPaths = {
 
 
 def generateFilterForm(filters: list, path: str):
-    fileName = path + os.sep + 'FilterForm.tsx'
+    fileName = path + os.altsep + 'FilterForm.tsx'
 
     filterFormTpl = FileTools.readFile(tplPaths['formTpl'])
 
@@ -22,8 +22,9 @@ def generateFilterForm(filters: list, path: str):
 
     filterFormTpl = filterFormTpl.replace(TplEnum.REPLACE_FORM_CONTENT, filtersContent)
 
-    print(fileName)
-    print(filterFormTpl)
+    FileTools.writeFile(fileName, filterFormTpl)
+
+    filterFormTpl = PrettierTools.format(fileName)
 
     FileTools.writeFile(fileName, filterFormTpl)
 
@@ -34,13 +35,23 @@ def generateParams(filters: list):
     for item in filters:
         if item['type'] == 'string':
             paramsStr = paramsStr + generateInput(item)
+        if item['type'] in ['integer', 'long', 'number'] and DataUtils.isLikeDate(item['key']):
+            paramsStr = paramsStr + generateDate(item)
 
     return paramsStr
 
 
 def generateInput(item):
     tpl = FileTools.readFile(tplPaths['inputTpl'])
-    tpl = tpl.replace(TplEnum.REPLACE_TITLE, item['keyName'])
-    tpl = tpl.replace(TplEnum.REPLACE_KEY_NAME, item['title'])
-    tpl = tpl.replace(TplEnum.REPLACE_HINT, '请输入' + item['keyName'])
+    tpl = tpl.replace(TplEnum.REPLACE_TITLE, item['title'])
+    tpl = tpl.replace(TplEnum.REPLACE_KEY_NAME, item['key'])
+    tpl = tpl.replace(TplEnum.REPLACE_HINT, '请输入' + item['title'])
+    return tpl
+
+
+def generateDate(item):
+    tpl = FileTools.readFile(tplPaths['timeRange'])
+    tpl = tpl.replace(TplEnum.REPLACE_TITLE, item['title'])
+    tpl = tpl.replace(TplEnum.REPLACE_KEY_NAME, item['key'])
+    tpl = tpl.replace(TplEnum.REPLACE_HINT, '请输入' + item['title'])
     return tpl
