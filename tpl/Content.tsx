@@ -21,7 +21,7 @@ const Content = (props: Props) => {
     return (
         <Layout>
             <Table dataSource={data} pagination={false} rowKey="id">
-                ##REPLACE_CONTENT_ITEM##
+                ##REPLACE_CONTENT_ITEMS##
             </Table>
         </Layout>
     );

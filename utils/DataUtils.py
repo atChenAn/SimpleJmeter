@@ -18,9 +18,9 @@ def getValidMethod(obj):
     return valids
 
 
-def getSelectIndexs(items):
+def getSelectIndexs(items, arrWidth=3):
     paramsIndex = []
-    for index in range(0, len(items), 3):
+    for index in range(0, len(items), arrWidth):
         paramsIndex.append(items[index].row())
     return paramsIndex
 
@@ -43,6 +43,18 @@ def convertSelectFilter(filters):
             'key': objects.get(item, 'name'),
             'title': objects.get(item, 'description'),
             'type': objects.get(item, 'type'),
+        })
+
+    return buffer
+
+
+def convertSelectFields(fields):
+    # 获取对应的  Title、keyName即可
+    buffer = []
+    for item in fields:
+        buffer.append({
+            'key': objects.get(item, 'key'),
+            'title': objects.get(item, 'name.description'),
         })
 
     return buffer

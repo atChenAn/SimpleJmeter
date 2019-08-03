@@ -14,6 +14,8 @@ from pydash import objects
 import configparser
 import base64
 
+sysLog = LogTools.SysLogs()
+
 try:
     ctypes.windll.LoadLibrary('Qt5Core.dll')
 except:
@@ -67,9 +69,10 @@ class MainApp(QMainWindow, Ui_MainWindow):
         if not config.has_section('UI'):
             config.add_section('UI')
         try:
+            config.set('UI', 'url', base64.b64encode(url.encode('utf-8')).decode('utf-8'))
             config.write(open(configPath, 'w'))
-        except Exception as e:
-            print(e)
+        except Exception:
+            sysLog.warn('写出url保存配置失败')
         # QMessageBox.information(self, '信息', '恭喜您，成功了')
 
     @pyqtSlot(object)
@@ -109,16 +112,22 @@ class MainApp(QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_runPushButton_clicked(self):
 
+        # 存储路径
+        savePath = self.lineEdit_2.text()
+
         # 生成查询参数部分的Form表单TSX
         paramsItems = self.tableWidget_2.selectedIndexes()
         paramsIndexs = DataUtils.getSelectIndexs(paramsItems)
         filteredData = DataUtils.getSelectFilter(paramsIndexs, self.params)
         filteredData = DataUtils.convertSelectFilter(filteredData)
-        CreaterTools.generateFilterForm(filteredData, self.lineEdit_2.text())
+        CreaterTools.generateFilterForm(filteredData, savePath)
 
         # 生成TableContent的TSX
-        # filedItems = self.tableWidget_3.selectedIndexes()
-        # filedIndexs = DataUtils.getSelectIndexs(filedItems)
+        fieldsIndex = self.tableWidget_3.selectedIndexes()
+        fieldsIndex = DataUtils.getSelectIndexs(fieldsIndex, 2)
+        fieldsData = DataUtils.getSelectFilter(fieldsIndex, self.fields)
+        fieldsData = DataUtils.convertSelectFields(fieldsData)
+        CreaterTools.generateContent(fieldsData, savePath)
 
         QMessageBox.information(self, '成功', '生成完毕！')
 
