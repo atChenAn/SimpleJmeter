@@ -110,8 +110,7 @@ class MainApp(QMainWindow, Ui_MainWindow):
                 print(e)
 
     @pyqtSlot()
-    def on_runPushButton_clicked(self):
-
+    def on_pushButton_clicked(self):
         # 存储路径
         savePath = self.lineEdit_2.text()
 
@@ -121,14 +120,36 @@ class MainApp(QMainWindow, Ui_MainWindow):
         filteredData = DataUtils.getSelectFilter(paramsIndexs, self.params)
         filteredData = DataUtils.convertSelectFilter(filteredData)
         CreaterTools.generateFilterForm(filteredData, savePath)
+        self.label_7.setText(u'状态：生成FilterForm成功！')
+        self.label_7.repaint()
 
+    @pyqtSlot()
+    def on_pushButton_2_clicked(self):
+        # 存储路径
+        savePath = self.lineEdit_2.text()
         # 生成TableContent的TSX
         fieldsIndex = self.tableWidget_3.selectedIndexes()
         fieldsIndex = DataUtils.getSelectIndexs(fieldsIndex, 2)
         fieldsData = DataUtils.getSelectFilter(fieldsIndex, self.fields)
         fieldsData = DataUtils.convertSelectFields(fieldsData)
         CreaterTools.generateContent(fieldsData, savePath)
+        self.label_7.setText(u'状态：生成Content成功！')
+        self.label_7.repaint()
 
+    @pyqtSlot()
+    def on_pushButton_3_clicked(self):
+        # 存储路径
+        savePath = self.lineEdit_2.text()
+        # 生成manage 部分的TSX
+        CreaterTools.generateManage(savePath)
+        self.label_7.setText('状态：生成Manage成功！')
+        self.label_7.repaint()
+
+    @pyqtSlot()
+    def on_runPushButton_clicked(self):
+        self.on_pushButton_clicked()
+        self.on_pushButton_2_clicked()
+        self.on_pushButton_3_clicked()
         QMessageBox.information(self, '成功', '生成完毕！')
 
 

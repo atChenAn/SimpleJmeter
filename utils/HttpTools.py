@@ -116,7 +116,7 @@ def http_get(path, params={}):
         buffer = response.text;
         return buffer;
     except Exception as e:
-        sysLog.warn('请求失败：' + e)
+        sysLog.warn('请求失败：' + str(e))
 
 
 if __name__ == '__main__':
