@@ -1,7 +1,7 @@
 import React from 'react';
 import createSearchPage, {GetDataApi} from 'search-page';
 import {cloneDeep} from 'lodash';
-import {apiname as API} from 'common/src/api';
+import { ##REPLACE_MANAGE_API## as API } from 'common/src/api';
 import {notificationPop, NotificationType} from 'common/src/components';
 import {GlobalErrorMsg} from 'common/src/constantValue/errorMessage.val';
 import {getErrorMsg} from 'common/src/utils/commonUtils';
@@ -11,11 +11,12 @@ import Content from './Content';
 const getDataApi: GetDataApi = async (filters, pagination) => {
     try {
         const filterDump = cloneDeep(filters);
-        const {data} = await API.apiname({
+        ##REPLACE_MANAGE_FILTER##
+        const {data} = await API.##REPLACE_MANAGE_API_METHOD##({
             params: {
                 ...filterDump,
-                pageNo: pagination.current,
-                pageSize: pagination.pageSize
+                ##REPLACE_MANAGE_PAGE_NO##: pagination.current,
+                ##REPLACE_MANAGE_PAGE_SIZE##: pagination.pageSize
             },
         });
         return {data, total: data.meta.totalCount};

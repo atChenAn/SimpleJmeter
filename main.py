@@ -141,7 +141,7 @@ class MainApp(QMainWindow, Ui_MainWindow):
         # 存储路径
         savePath = self.lineEdit_2.text()
         # 生成manage 部分的TSX
-        CreaterTools.generateManage(savePath)
+        CreaterTools.generateManage(savePath, self.params, self.currentItem)
         self.label_7.setText('状态：生成Manage成功！')
         self.label_7.repaint()
 

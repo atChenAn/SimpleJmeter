@@ -1,5 +1,6 @@
 # coding=utf-8
 from pydash import objects
+from utils import TplEnum
 import Levenshtein
 
 
@@ -188,6 +189,25 @@ def isSelectType(item):  # key、title、type
 
 def reverse(text):
     return text[::-1]
+
+
+def replaceManageTpl(contentTpl: str, filter, apiItem):
+    targetTple = contentTpl
+
+    print(filter)
+
+    # 需要选择项目路径，确定eaasymockrc 文件位置，定位api文件位置以及文件名
+    #
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_API, 'apiName')
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_API_METHOD, 'methodName')
+
+    # 根据传入的filter计算出时间filterKey对应的filter组然后进行替换
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_FILTER, '')
+    # 检测分页情况属于哪一种：pageNo/pageSize 或者 index/size 执行替换
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_PAGE_NO, 'pageNo')
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_PAGE_SIZE, 'pageSize')
+
+    return targetTple;
 
 
 if __name__ == '__main__':

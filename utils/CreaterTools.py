@@ -134,12 +134,23 @@ def generateContentItem(fields: list):
     return itemStr
 
 
-def generateManage(path: str):
+def generateManage(path: str, filter, apiItem):
     fileName = path + os.sep + 'Manage.tsx'
 
     contentTpl = FileTools.readFile(tplPaths['manage'])
 
-    # contentTpl = contentTpl.replace(TplEnum.REPLACE_CONTENT_ITEMS, filtersContent)
+    # # Manage 筛选条件部分替换
+    # REPLACE_MANAGE_FILTER = '##REPLACE_MANAGE_FILTER##'
+    # # Manage api导出名称
+    # REPLACE_MANAGE_API = '##REPLACE_MANAGE_API##'
+    # # Manage api 方法名称
+    # REPLACE_MANAGE_API_METHOD = '##REPLACE_MANAGE_API_METHOD##'
+    # # 分页参数 - 页 no
+    # MANAGE_PAGE_NO = '##MANAGE_PAGE_NO##'
+    # # 分页参数 - 页 size
+    # MANAGE_PAGE_SIZE = '##MANAGE_PAGE_SIZE##'
+
+    contentTpl = DataUtils.replaceManageTpl(contentTpl, filter, apiItem)
 
     FileTools.writeFile(fileName, contentTpl)
 
