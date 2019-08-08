@@ -106,13 +106,25 @@ def filter(listData, keyWord):
 
 def buildFields(apiItem, data):
     ref = objects.get(apiItem, 'responses.200.schema.$ref')
+
+    if ref is None:
+        ref = objects.get(apiItem, 'responses.200.schema.items.$ref')
+
     ref = ref.replace('#/definitions/', '')
 
     dataObj = json.loads(data)
-    ref = objects.get(dataObj, 'definitions.' + ref + '.properties.data.items.$ref')
+    tempRef = objects.get(dataObj, 'definitions.' + ref + '.properties.data.items.$ref')
+
+    if tempRef:
+        ref = tempRef
+
     try:
-        ref = ref.replace('#/definitions/', '')
-        cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
+        cols = []
+        if tempRef is None:
+            cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
+        else:
+            ref = ref.replace('#/definitions/', '')
+            cols = objects.get(dataObj, 'definitions.' + ref + '.properties')
 
         fields = []
         for key in cols:

@@ -3,7 +3,6 @@
 import React from 'react';
 import {Table} from 'antd';
 import styled from 'styled-components';
-import {PlanListItem} from 'common/src/types/procurement/plan';
 import {def} from 'common/src/utils/commonUtils';
 import {AutoText} from 'common/src/components/AutoText/AutoText';
 
