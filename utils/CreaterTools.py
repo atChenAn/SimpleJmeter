@@ -54,15 +54,6 @@ def generateParams(filters: list):
 
     tarList = DataUtils.convertTimeGroup(filters, tempList)
 
-    # 将groupIndex每组最后一个元素记下 [2,5]
-    # tempList = arrays.mapcat(tempList, lambda item: item[1])
-
-    # 构建新的list
-    # tarList = []
-    # for index in range(len(filters)):
-    #     if not index in tempList:
-    #         tarList.append(filters[index])
-
     for item in tarList:
         # 输入类型
         if item['type'] == 'string':
@@ -134,10 +125,55 @@ def generateContentItem(fields: list):
     return itemStr
 
 
-def generateManage(path: str, filter, apiItem):
+def generateManage(path: str, filters, apiItem):
     fileName = path + os.sep + 'Manage.tsx'
 
     contentTpl = FileTools.readFile(tplPaths['manage'])
+
+    # 寻找filter中时间组索引
+    # 转换成字符组
+    strList = arrays.mapcat(filters, lambda item: item['key'])
+
+    # 获取相似indexsGroup
+    indexs = DataUtils.enumSimilarityGroup(strList)
+
+    # 遍历group，查看是不是时间字段，如果是则将indexGroup存下来 [[1,2],[4,5]]
+    tempList = []
+    for index in range(len(indexs)):
+        key = strList[indexs[index][0]].lower()
+        if 'time' in key or 'date' in key:
+            tempList.append(indexs[index])
+
+    keyMaps = []
+    # 生成相似的索引组与实际formkey关联结构
+    # 建立formKey与filterKey的对应关系
+    keyMaps = DataUtils.buildMaps(tempList, filters)
+
+    # 循环构建替换代码
+    timeTpl = ''
+    for formKey in keyMaps:
+        tempKey = keyMaps[formKey][0].lower()
+        if 'to' in tempKey or 'end' in tempKey:
+            timeTpl += 'filterDump.' + keyMaps[formKey][
+                1] + '= getValue(filterDump,\'' + formKey + '.startTime\',undefined);'
+            timeTpl += 'filterDump.' + keyMaps[formKey][0] + '= getValue(filterDump,\'' + formKey + '.endTime\',undefined);'
+        else:
+            timeTpl += 'filterDump.' + keyMaps[formKey][
+                0] + '= getValue(filterDump,\'' + formKey + '.startTime\',undefined);'
+            timeTpl += 'filterDump.' + keyMaps[formKey][1] + '= getValue(filterDump,\'' + formKey + '.endTime\',undefined);'
+
+        timeTpl += 'delete filterDump.' + formKey + ';'
+
+    print(timeTpl)
+
+    # filter.contractStartDate = filter.signDate && filter.signDate.startTime;
+    #   filter.contractEndDate = filter.signDate && filter.signDate.endTime;
+
+    # 执行替换
+
+    # 寻找分页参数
+
+    # 执行替换
 
     # # Manage 筛选条件部分替换
     # REPLACE_MANAGE_FILTER = '##REPLACE_MANAGE_FILTER##'
@@ -150,7 +186,7 @@ def generateManage(path: str, filter, apiItem):
     # # 分页参数 - 页 size
     # MANAGE_PAGE_SIZE = '##MANAGE_PAGE_SIZE##'
 
-    contentTpl = DataUtils.replaceManageTpl(contentTpl, filter, apiItem)
+    contentTpl = DataUtils.replaceManageTpl(contentTpl, filter, apiItem, timeTpl)
 
     FileTools.writeFile(fileName, contentTpl)
 

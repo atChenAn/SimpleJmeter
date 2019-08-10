@@ -77,7 +77,7 @@ def convertTimeGroup(filter: list, groups: list):
                 isContinue = isContinue + 1
             if name in objects.get(after, 'key', '').lower():
                 isContinue = isContinue + 1
-        if isContinue == 1:
+        if isContinue != 2:
             continue
 
         # 计算组key 组title
@@ -191,7 +191,7 @@ def reverse(text):
     return text[::-1]
 
 
-def replaceManageTpl(contentTpl: str, filter, apiItem):
+def replaceManageTpl(contentTpl: str, filter, apiItem, filterTpl):
     targetTple = contentTpl
 
     print(filter)
@@ -202,12 +202,44 @@ def replaceManageTpl(contentTpl: str, filter, apiItem):
     targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_API_METHOD, 'methodName')
 
     # 根据传入的filter计算出时间filterKey对应的filter组然后进行替换
-    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_FILTER, '')
+    targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_FILTER, filterTpl)
     # 检测分页情况属于哪一种：pageNo/pageSize 或者 index/size 执行替换
     targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_PAGE_NO, 'pageNo')
     targetTple = targetTple.replace(TplEnum.REPLACE_MANAGE_PAGE_SIZE, 'pageSize')
 
     return targetTple;
+
+
+def buildMaps(indexGroup, filters):
+    maps = {}
+
+    for group in indexGroup:
+
+        before = filters[group[0]]
+        after = filters[group[1]]
+
+        whiteList = ['date', 'time']
+        isContinue = 0
+        for name in whiteList:
+            if name in objects.get(before, 'key', '').lower():
+                isContinue = isContinue + 1
+            if name in objects.get(after, 'key', '').lower():
+                isContinue = isContinue + 1
+        if isContinue != 2:
+            continue
+
+        # # 计算组key 组title
+        groupeKey = getNumofCommonSubstr(objects.get(before, 'key', ''), objects.get(after, 'key', ''))
+        beforeSecondKey = objects.get(before, 'key', '').replace(groupeKey, '')
+        afterSecondKey = objects.get(after, 'key', '').replace(groupeKey, '')
+        # 第二次计算有没有相似的keyN内容，只要是黄波的习惯
+        secondCommon = getNumofCommonSubstr(beforeSecondKey, afterSecondKey)
+        # 如果发现存在相似的字符串，长度超过4的，则拼接上去
+        if len(secondCommon) >= 4:
+            groupeKey = groupeKey + secondCommon
+        maps[groupeKey] = [objects.get(before, 'key', ''), objects.get(after, 'key', '')]
+
+    return maps
 
 
 if __name__ == '__main__':

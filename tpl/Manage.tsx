@@ -1,6 +1,7 @@
 import React from 'react';
 import createSearchPage, {GetDataApi} from 'search-page';
 import {cloneDeep} from 'lodash';
+import { getValue } from 'gmsoft-tools';
 import { ##REPLACE_MANAGE_API## as API } from 'common/src/api';
 import {notificationPop, NotificationType} from 'common/src/components';
 import {GlobalErrorMsg} from 'common/src/constantValue/errorMessage.val';
