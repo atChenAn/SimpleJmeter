@@ -23,7 +23,7 @@ except:
 
 from ui.main import Ui_MainWindow
 
-configPath = sys.path[0] + os.sep + 'ui-cache.ini'
+configPath = sys.path[1] + os.sep + 'ui-cache.ini'
 
 
 class MainApp(QMainWindow, Ui_MainWindow):
@@ -42,6 +42,8 @@ class MainApp(QMainWindow, Ui_MainWindow):
         UiUtils.initContentTable(self.tableWidget_3)
         self.setFixedSize(self.width(), self.height())  # 禁用最大化、最小化、拉伸
 
+        print(sys.path[1])
+
         config = configparser.ConfigParser()
         config.read(configPath, encoding='utf-8')
         try:
@@ -57,6 +59,11 @@ class MainApp(QMainWindow, Ui_MainWindow):
     @pyqtSlot()  # 这个注解在QtCore中
     def on_downloadPushButton_clicked(self):
         url = self.lineEdit.text()
+
+        if 'http://' in url or 'https://' in url:
+            url = url.replace('http://', '')
+            url = url.replace('https://', '')
+
         self.data = HttpTools.http_get(url)
         tags = BuildTools.buildTop(self.data)
         tags = BuildTools.buildChild(self.data, tags)

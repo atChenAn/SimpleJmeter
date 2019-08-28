@@ -4,10 +4,10 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['E:\\SimpleJmeter','C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python37-32'],
+             pathex=['E:\\SimpleJmeter'],
              binaries=[],
              datas=[],
-             hiddenimports=['PyQt5'],
+             hiddenimports=['E:\\SimpleJmeter\\tpl'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

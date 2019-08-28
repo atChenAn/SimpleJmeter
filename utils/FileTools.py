@@ -48,7 +48,7 @@ def readFile(path):
         fileReader.close()
         return data
     else:
-        sysLog.info('读取文件失败：文件不存在或者path指定的路径是文件夹')
+        sysLog.info('读取文件失败：文件不存在或者path指定的路径是文件夹：' + path)
 
 
 def writeFile(path, data):

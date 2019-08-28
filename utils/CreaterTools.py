@@ -4,7 +4,7 @@ import math
 from pydash import objects, arrays
 from utils import FileTools, TplEnum, DataUtils, PrettierTools
 
-runPath = sys.path[0]
+runPath = sys.path[1]
 
 tplRoot = runPath + os.sep + 'tpl' + os.sep
 

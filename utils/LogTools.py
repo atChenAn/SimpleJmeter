@@ -12,7 +12,7 @@ class SysLogs:
     }
 
     logLevel = 3  # 0 错误 1 警告 2 信息 3 开发
-    logPath = sys.path[0] + os.sep + 'log'
+    logPath = sys.path[1] + os.sep + 'log'
 
     def __init__(self, level=3, logPath=None):
         self.setLevel(level)
@@ -51,6 +51,7 @@ class SysLogs:
         # 打开文件流写出log
         try:
             fileName = self.logPath + os.sep + TimeTools.getNowTimeStr(TimeTools.DateFormat.DATE_DATE) + '.log'
+            print(fileName)
             fileObj = open(fileName, 'a+')
             fileObj.write(timeStr)
             fileObj.flush()
